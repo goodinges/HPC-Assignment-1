@@ -80,7 +80,7 @@ int main( int argc, char *argv[])
 	  MPI_Recv(a, arraySize, MPI_INT, origin, tag, MPI_COMM_WORLD, &status);
 	  get_timestamp(&time2);
 	  double elapsed = timestamp_diff_in_seconds(time1,time2);
-	  printf("Rank %d hosted on %s received the last message", rank, hostname);
+	  printf("Rank %d hosted on %s received the last message.\n", rank, hostname);
 
 	  printf("Total time spent on communicating: %f seconds.\n", elapsed);
 	  printf("Communication per second: %f\n", N*mpisize/elapsed);
