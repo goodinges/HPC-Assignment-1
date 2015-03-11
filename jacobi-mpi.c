@@ -107,7 +107,7 @@ int main ( int argc, char *argv[] )
 			initial_residual += 1;//initial_residuals[i]*initial_residuals[i];
 		}
 		initial_residual = sqrt(initial_residual);
-		printf("%6.4f\n",initial_residual);
+		//printf("%6.4f\n",initial_residual);
 		threshold = initial_residual;
 		threshold /= 1000000;
 
@@ -155,18 +155,25 @@ int main ( int argc, char *argv[] )
 				residuals[realI+1] -= u[i];
 			}
 		}
+		/*	for(i=0;i<N;i++){
+				printf("%d: r:%d: %12.10f\n", rank, i, residuals[i]);
+			}*/
 		MPI_Reduce(residuals, residuals_reduced, N, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+		/*if(rank==0)
+			for(i=0;i<N;i++){
+				printf("reduced: %d: r:%d: %12.10f\n", rank, i, residuals_reduced[i]);
+			}*/
 
 		if(rank==0)
 		{
 
 			for(i=0;i<N;i++){
-				residuals[i] = residuals[i]/h2 - 1;
-				//printf("%12.10f\n", residuals[i]);
+				residuals_reduced[i] = residuals_reduced[i]/h2 - 1;
+			//	printf("%12.10f\n", residuals_reduced[i]);
 			}
 			double residual = 0;
 			for(i=0;i<N;i++){
-				residual += (residuals[i])*(residuals[i]);
+				residual += (residuals_reduced[i])*(residuals_reduced[i]);
 			}
 			residual = sqrt(residual);
 			//printf("%ld %12.10f\n",k,residual);
@@ -174,32 +181,34 @@ int main ( int argc, char *argv[] )
 				printf("%ld iterations\n",k);
 				finished = 1;
 			}
-			MPI_Bcast(&finished, 1, MPI_INT, 0, MPI_COMM_WORLD);
-		       	if(finished == 1)
+		}
+
+		MPI_Bcast(&finished, 1, MPI_INT, 0, MPI_COMM_WORLD);
+		if(finished == 1)
+		{
+			break;
+		}
+		else
+		{
+			for (i=0;i<N;i++)
 			{
-				break;
+				residuals[i] = 0;
 			}
-			else
+			if(rank!=0)
 			{
-				for (i=0;i<N;i++)
-				{
-					residuals[i] = 0;
-				}
-				if(rank!=0)
-				{
-					MPI_Send(&u[0], 1, MPI_DOUBLE, rank-1, tag, MPI_COMM_WORLD);
-				}
-				if(rank!=mpisize-1)
-				{
-					MPI_Send(&u[uSize-1], 1, MPI_DOUBLE, rank+1, tag, MPI_COMM_WORLD);
-					MPI_Recv(&pre_u[uSize+1], 1, MPI_DOUBLE, rank+1, tag, MPI_COMM_WORLD, &status);
-				}
-				if(rank!=0)
-				{
-					MPI_Recv(&pre_u[0], 1, MPI_DOUBLE, rank-1, tag, MPI_COMM_WORLD, &status);
-				}
+				MPI_Send(&u[0], 1, MPI_DOUBLE, rank-1, tag, MPI_COMM_WORLD);
+			}
+			if(rank!=mpisize-1)
+			{
+				MPI_Send(&u[uSize-1], 1, MPI_DOUBLE, rank+1, tag, MPI_COMM_WORLD);
+				MPI_Recv(&pre_u[uSize+1], 1, MPI_DOUBLE, rank+1, tag, MPI_COMM_WORLD, &status);
+			}
+			if(rank!=0)
+			{
+				MPI_Recv(&pre_u[0], 1, MPI_DOUBLE, rank-1, tag, MPI_COMM_WORLD, &status);
 			}
 		}
+
 		/*
 		for(i=0;i<N;i++){
 			double s = 0;
