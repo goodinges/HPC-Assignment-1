@@ -10,8 +10,8 @@ int main ( int argc, char *argv[] )
 	MPI_Comm_size(MPI_COMM_WORLD, &mpisize);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-	if (argc != 2) {
-		fprintf(stderr, "Please specify how often the messege should be sent around the ring as an argument!\n");
+	if (argc != 3) {
+		fprintf(stderr, "Wrong number of arguments!\n");
 		MPI_ABORT(MPI_COMM_WORLD,1);
 	}
 
@@ -21,6 +21,7 @@ int main ( int argc, char *argv[] )
 		fprintf(stderr, "N should be a multiple of p\n");
 		MPI_ABORT(MPI_COMM_WORLD,1);
 	}
+	long maxIterations = atoi(argv[2]);
 	int uSize = N/mpisize;
 
 	double residuals[N];
@@ -122,7 +123,8 @@ int main ( int argc, char *argv[] )
 	long k;
 	double h2 = h*h;
 	double diag = 2/h2;
-	for(k=0;;k++){
+	double residual;
+	for(k=0;k<maxIterations ;k++){
 		for(i=0;i<uSize;i++){
 			double sum = 1;
 			sum -= (-1)*pre_u[i]/h2 + (-1)*pre_u[i+2]/h2;
@@ -171,14 +173,13 @@ int main ( int argc, char *argv[] )
 				residuals_reduced[i] = residuals_reduced[i]/h2 - 1;
 			//	printf("%12.10f\n", residuals_reduced[i]);
 			}
-			double residual = 0;
+			residual = 0;
 			for(i=0;i<N;i++){
 				residual += (residuals_reduced[i])*(residuals_reduced[i]);
 			}
 			residual = sqrt(residual);
 			//printf("%ld %12.10f\n",k,residual);
 			if(residual<=threshold){
-				printf("%ld iterations\n",k);
 				finished = 1;
 			}
 		}
@@ -237,6 +238,10 @@ int main ( int argc, char *argv[] )
 			break;
 		}
 		*/
+	}
+	if(rank==0){
+		printf("%ld iterations\n",k);
+		printf("Residual: %12.10f\n",residual);
 	}
 }
 
