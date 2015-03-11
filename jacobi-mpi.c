@@ -107,7 +107,7 @@ int main ( int argc, char *argv[] )
 			initial_residual += 1;//initial_residuals[i]*initial_residuals[i];
 		}
 		initial_residual = sqrt(initial_residual);
-		//printf("%6.4f\n",initial_residual);
+		printf("%6.4f\n",initial_residual);
 		threshold = initial_residual;
 		threshold /= 1000000;
 
@@ -128,11 +128,11 @@ int main ( int argc, char *argv[] )
 			sum -= (-1)*pre_u[i]/h2 + (-1)*pre_u[i+2]/h2;
 			u[i] = sum/diag;
 		}
-
-		/*for(i=0;i<uSize;i++){
+/*
+		for(i=0;i<uSize;i++){
 			printf("%12.10f\n", u[i]);
-		}*/
-
+		}
+*/
 /*		for(i=0;i<N+2;i++){
 			printf("%12.10f\n", pre_u[i]);
 		}
@@ -152,7 +152,6 @@ int main ( int argc, char *argv[] )
 			residuals[realI] += 2*u[i];
 			if(realI+1<N)
 			{
-				if(rank==1)
 				residuals[realI+1] -= u[i];
 			}
 		}
@@ -163,6 +162,7 @@ int main ( int argc, char *argv[] )
 
 			for(i=0;i<N;i++){
 				residuals[i] = residuals[i]/h2 - 1;
+				//printf("%12.10f\n", residuals[i]);
 			}
 			double residual = 0;
 			for(i=0;i<N;i++){
