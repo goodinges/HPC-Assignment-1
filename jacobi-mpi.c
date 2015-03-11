@@ -105,11 +105,12 @@ int main ( int argc, char *argv[] )
 */
 		for(i=0;i<N;i++){
 			initial_residual += 1;//initial_residuals[i]*initial_residuals[i];
-			initial_residual = sqrt(initial_residual);
-			//printf("%6.4f\n",initial_residual);
-			threshold = initial_residual;
-			threshold /= 1000000;
 		}
+		initial_residual = sqrt(initial_residual);
+		//printf("%6.4f\n",initial_residual);
+		threshold = initial_residual;
+		threshold /= 1000000;
+
 	}
 
 	//Jacobi
@@ -122,15 +123,21 @@ int main ( int argc, char *argv[] )
 	double h2 = h*h;
 	double diag = 2/h2;
 	for(k=0;;k++){
-		//printf("\n--\n");
 		for(i=0;i<uSize;i++){
 			double sum = 1;
-			sum -= (-1)*pre_u[i] + (-1)*pre_u[i+2];
+			sum -= (-1)*pre_u[i]/h2 + (-1)*pre_u[i+2]/h2;
 			u[i] = sum/diag;
-			//printf("%5.2f-",u[i]);
 		}
 
-		for(i=0;i<N;i++){
+		/*for(i=0;i<uSize;i++){
+			printf("%12.10f\n", u[i]);
+		}*/
+
+/*		for(i=0;i<N+2;i++){
+			printf("%12.10f\n", pre_u[i]);
+		}
+*/
+		for(i=0;i<uSize+2;i++){
 			pre_u[i+1] = u[i];
 		}
 
@@ -145,33 +152,39 @@ int main ( int argc, char *argv[] )
 			residuals[realI] += 2*u[i];
 			if(realI+1<N)
 			{
+				if(rank==1)
 				residuals[realI+1] -= u[i];
 			}
 		}
-		//printf("1");
 		MPI_Reduce(residuals, residuals_reduced, N, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-		//printf("2");
+
 		if(rank==0)
 		{
+
+			for(i=0;i<N;i++){
+				residuals[i] = residuals[i]/h2 - 1;
+			}
 			double residual = 0;
 			for(i=0;i<N;i++){
-				residual += (residuals[i]-1)*(residuals[i]-1);
+				residual += (residuals[i])*(residuals[i]);
 			}
 			residual = sqrt(residual);
-			printf("%i %12.10f\n",k,residual);
+			//printf("%ld %12.10f\n",k,residual);
 			if(residual<=threshold){
 				printf("%ld iterations\n",k);
 				finished = 1;
 			}
-			//printf("3");
 			MPI_Bcast(&finished, 1, MPI_INT, 0, MPI_COMM_WORLD);
-			//printf("4");
 		       	if(finished == 1)
 			{
 				break;
 			}
 			else
 			{
+				for (i=0;i<N;i++)
+				{
+					residuals[i] = 0;
+				}
 				if(rank!=0)
 				{
 					MPI_Send(&u[0], 1, MPI_DOUBLE, rank-1, tag, MPI_COMM_WORLD);
