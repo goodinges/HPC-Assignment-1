@@ -5,7 +5,7 @@
 
 int main ( int argc, char *argv[] )
 {
-	int mpisize, rank, tag, origin, destination;
+	int mpisize, rank, tag;
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &mpisize);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -36,8 +36,6 @@ int main ( int argc, char *argv[] )
 		residuals_reduced[i] = 0;
 	}
 	int finished = 0;
-	int message_out;
-	int message_in;
 	tag = 99;
 
 	double h = 1;
@@ -46,8 +44,6 @@ int main ( int argc, char *argv[] )
 	MPI_Status status;
 
 	double u[uSize];
-	double upperNeighbor;
-	double lowerNeighbor;
 
 	double** A;
 	A = (double**)malloc((N) * sizeof(double*));
@@ -243,6 +239,6 @@ int main ( int argc, char *argv[] )
 		printf("%ld iterations\n",k);
 		printf("Residual: %12.10f\n",residual);
 	}
+
+	return 0;
 }
-
-
