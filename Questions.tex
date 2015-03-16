@@ -1,0 +1,84 @@
+% This file was converted to LaTeX by Writer2LaTeX ver. 1.2.1
+% see http://writer2latex.sourceforge.net for more info
+\documentclass[letterpaper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb,amsfonts,textcomp}
+\usepackage{color}
+\usepackage{array}
+\usepackage{hhline}
+\usepackage{hyperref}
+\hypersetup{pdftex, colorlinks=true, linkcolor=blue, citecolor=blue, filecolor=blue, urlcolor=blue, pdftitle=, pdfauthor=Kamran-Ubuntu , pdfsubject=, pdfkeywords=}
+% List styles
+\newcommand\liststyleLi{%
+\renewcommand\theenumi{\arabic{enumi}}
+\renewcommand\theenumii{\arabic{enumii}}
+\renewcommand\theenumiii{\arabic{enumiii}}
+\renewcommand\theenumiv{\arabic{enumiv}}
+\renewcommand\labelenumi{\theenumi.}
+\renewcommand\labelenumii{\theenumii.}
+\renewcommand\labelenumiii{\theenumiii.}
+\renewcommand\labelenumiv{\theenumiv.}
+}
+% Page layout (geometry)
+\setlength\voffset{-1in}
+\setlength\hoffset{-1in}
+\setlength\topmargin{0.7874in}
+\setlength\oddsidemargin{0.7874in}
+\setlength\textheight{9.4251995in}
+\setlength\textwidth{6.9251995in}
+\setlength\footskip{0.0cm}
+\setlength\headheight{0cm}
+\setlength\headsep{0cm}
+% Footnote rule
+\setlength{\skip\footins}{0.0469in}
+\renewcommand\footnoterule{\vspace*{-0.0071in}\setlength\leftskip{0pt}\setlength\rightskip{0pt plus 1fil}\noindent\textcolor{black}{\rule{0.25\columnwidth}{0.0071in}}\vspace*{0.0398in}}
+% Pages styles
+\makeatletter
+\newcommand\ps@Standard{
+  \renewcommand\@oddhead{}
+  \renewcommand\@evenhead{}
+  \renewcommand\@oddfoot{}
+  \renewcommand\@evenfoot{}
+  \renewcommand\thepage{\arabic{page}}
+}
+\makeatother
+\pagestyle{Standard}
+\title{}
+\author{Kamran-Ubuntu }
+\date{2015-03-16}
+\begin{document}
+{\centering\bfseries
+Homework 1
+\par}
+
+\liststyleLi
+\begin{enumerate}
+\item Timing
+
+\begin{enumerate}
+\item int\_ring for N=10,000,000 on Crunchy 5:\newline
+Total time spent on communicating: 114.051638 seconds. \newline
+Communication per second: 876795.823682 \newline
+KB data communication per second: 3424.983686 KB/s
+\item int\_ring for N=1,000,000 among four crunchy servers:\newline
+Total time spent on communicating: 551.863249 seconds. \newline
+Communication per second: 18120.431146 \newline
+KB data communication per second: 70.782028 KB/s
+\item int\_ring\_array for N=100,000 on crunchy3:\newline
+Total time spent on communicating: 1905.830852 seconds. 
+
+Communication per second: 524.705537 
+
+MB data communication per second: 1049.411073 MB/s
+\item int\_ring\_array for N= 10,000 on four crunchy servers:\newline
+Total time spent on communicating: 1940.434607 seconds. 
+
+Communication per second: 51.534847 
+
+MB data communication per second: 103.069693 MB/s
+\end{enumerate}
+\end{enumerate}
+\end{document}
