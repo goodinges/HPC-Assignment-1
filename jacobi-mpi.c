@@ -151,34 +151,6 @@ int main ( int argc, char *argv[] )
 			}
 		}
 
-		/*
-		for(i=0;i<N;i++){
-			double s = 0;
-			int j = rank*uSize;
-			if(i>=j-1 && i<=j+uSize)
-			{
-				if(i-1>=j)
-				{
-					s += (-1);
-				}
-				s += (-1)*
-				for(j=0;j<N;j++){
-					s += A[i][j]*u[j];
-				}
-			}
-			residuals[i] = s - f[i];
-		}
-		double residual = 0;
-		for(i=0;i<N;i++){
-			residual += residuals[i]*residuals[i];
-		}
-		residual = sqrt(residual);
-		//printf("%i %12.10f\n",k,residual);
-		if(residual<=threshold){
-			printf("%ld iterations\n",k);
-			break;
-		}
-		*/
 	}
 
 	//Computing individual residuals
@@ -227,5 +199,5 @@ int main ( int argc, char *argv[] )
 		printf("Residual: %12.10f\n",residual);
 	}
 
-	return 0;
+	MPI_Finalize();
 }
