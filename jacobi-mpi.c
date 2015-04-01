@@ -24,16 +24,12 @@ int main ( int argc, char *argv[] )
 	long maxIterations = atoi(argv[2]);
 	int uSize = N/mpisize;
 
-	double residuals[N];
+	double *residuals = calloc(N, sizeof(double));
 	int i;
-	for (i=0;i<N;i++)
+	double *residuals_reduced;
+	if(rank==0)
 	{
-		residuals[i] = 0;
-	}
-	double residuals_reduced[N];
-	for (i=0;i<N;i++)
-	{
-		residuals_reduced[i] = 0;
+		residuals_reduced = calloc(N, sizeof(double));
 	}
 	int finished = 0;
 	tag = 99;
@@ -43,10 +39,10 @@ int main ( int argc, char *argv[] )
 
 	MPI_Status status;
 
-	double u[uSize];
+	double *u = calloc(uSize, sizeof(double));
 
-	double** A;
-	A = (double**)malloc((N) * sizeof(double*));
+	//double** A;
+	//A = (double**)malloc((N) * sizeof(double*));
 
 /*	long j;
 	for(i=0;i<N;i++){
@@ -111,10 +107,7 @@ int main ( int argc, char *argv[] )
 	}
 
 	//Jacobi
-	double pre_u[uSize + 2];
-	for(i=0;i<uSize + 2;i++){
-		pre_u[i] = 0;
-	}
+	double *pre_u = calloc(uSize + 2, sizeof(double));
 
 	long k;
 	double h2 = h*h;
