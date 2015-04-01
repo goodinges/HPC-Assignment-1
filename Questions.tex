@@ -81,4 +81,28 @@ Communication per second: 51.534847
 MB data communication per second: 103.069693 MB/s
 \end{enumerate}
 \end{enumerate}
+\begin{enumerate}
+\item Result independence and strong scalibility:
+	Running with N=10000000 and 10 iterations:\newline
+	p=1:\newline
+	Residual: 3162.2766760549
+	time	0m4.006s
+	\newline\newline
+	p=2:\newline
+	Residual: 3162.2766760549
+	time	0m2.481s
+	\newline\newline
+	p=4:\newline
+	Residual: 3162.2766760549
+	time	0m1.999s
+\end{enumerate}
+\begin{enumerate}
+\item The difficulty of implementing Gauss-Seidel smoother in parallel:\newline
+Because calculation of each element in every iteration in Guasse smoother uses
+not only the elements of the last iteration but the elements of the current
+iterations which has already been calculated, the logic of the smoother is
+naturally more serial and there would be little benefit in parallelizing it. In other
+words calculation of each item should wait for the calculation of the previous
+items and can not be done completely in parallel.
+\end{enumerate}
 \end{document}
