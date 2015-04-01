@@ -119,71 +119,23 @@ int main ( int argc, char *argv[] )
 			sum -= (-1)*pre_u[i]/h2 + (-1)*pre_u[i+2]/h2;
 			u[i] = sum/diag;
 		}
-/*
-		for(i=0;i<uSize;i++){
-			printf("%12.10f\n", u[i]);
-		}
-*/
-/*		for(i=0;i<N+2;i++){
-			printf("%12.10f\n", pre_u[i]);
-		}
-*/
+
 		for(i=0;i<uSize+2;i++){
 			pre_u[i+1] = u[i];
 		}
 
-		//Computing individual residuals
-		for(i=0;i<uSize;i++)
-		{
-			int realI = rank*uSize + i;
-			if(realI-1>=0)
-			{
-				residuals[realI-1] -= u[i];
-			}
-			residuals[realI] += 2*u[i];
-			if(realI+1<N)
-			{
-				residuals[realI+1] -= u[i];
-			}
-		}
-		/*	for(i=0;i<N;i++){
-				printf("%d: r:%d: %12.10f\n", rank, i, residuals[i]);
-			}*/
-		MPI_Reduce(residuals, residuals_reduced, N, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-		/*if(rank==0)
-			for(i=0;i<N;i++){
-				printf("reduced: %d: r:%d: %12.10f\n", rank, i, residuals_reduced[i]);
-			}*/
 
-		if(rank==0)
-		{
-
-			for(i=0;i<N;i++){
-				residuals_reduced[i] = residuals_reduced[i]/h2 - 1;
-			//	printf("%12.10f\n", residuals_reduced[i]);
-			}
-			residual = 0;
-			for(i=0;i<N;i++){
-				residual += (residuals_reduced[i])*(residuals_reduced[i]);
-			}
-			residual = sqrt(residual);
-			//printf("%ld %12.10f\n",k,residual);
-			if(residual<=threshold){
-				finished = 1;
-			}
-		}
-
-		MPI_Bcast(&finished, 1, MPI_INT, 0, MPI_COMM_WORLD);
+//		MPI_Bcast(&finished, 1, MPI_INT, 0, MPI_COMM_WORLD);
 		if(finished == 1)
 		{
 			break;
 		}
 		else
 		{
-			for (i=0;i<N;i++)
-			{
-				residuals[i] = 0;
-			}
+//			for (i=0;i<N;i++)
+//			{
+//				residuals[i] = 0;
+//			}
 			if(rank!=0)
 			{
 				MPI_Send(&u[0], 1, MPI_DOUBLE, rank-1, tag, MPI_COMM_WORLD);
@@ -228,6 +180,48 @@ int main ( int argc, char *argv[] )
 		}
 		*/
 	}
+
+	//Computing individual residuals
+	for(i=0;i<uSize;i++)
+	{
+		int realI = rank*uSize + i;
+		if(realI-1>=0)
+		{
+			residuals[realI-1] -= u[i];
+		}
+		residuals[realI] += 2*u[i];
+		if(realI+1<N)
+		{
+			residuals[realI+1] -= u[i];
+		}
+	}
+	/*	for(i=0;i<N;i++){
+		printf("%d: r:%d: %12.10f\n", rank, i, residuals[i]);
+		}*/
+	MPI_Reduce(residuals, residuals_reduced, N, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+	/*if(rank==0)
+	  for(i=0;i<N;i++){
+	  printf("reduced: %d: r:%d: %12.10f\n", rank, i, residuals_reduced[i]);
+	  }*/
+
+	if(rank==0)
+	{
+
+		for(i=0;i<N;i++){
+			residuals_reduced[i] = residuals_reduced[i]/h2 - 1;
+			//	printf("%12.10f\n", residuals_reduced[i]);
+		}
+		residual = 0;
+		for(i=0;i<N;i++){
+			residual += (residuals_reduced[i])*(residuals_reduced[i]);
+		}
+		residual = sqrt(residual);
+		//printf("%ld %12.10f\n",k,residual);
+		if(residual<=threshold){
+			finished = 1;
+		}
+	}
+	
 	if(rank==0){
 		printf("%ld iterations\n",k);
 		printf("Residual: %12.10f\n",residual);
